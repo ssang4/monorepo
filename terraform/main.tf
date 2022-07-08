@@ -119,3 +119,26 @@ module "vpc" {
   azs = [ "eu-central-1a", "eu-central-1b", "eu-central-1c" ]
   public_subnets = [ "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24" ]
 }
+
+module "terraform_state_s3_bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "3.3.0"
+
+  bucket = "ssang-terraform-state"
+  acl    = "private"
+}
+
+module "terraform_lock_dynamodb_table" {
+  source = "terraform-aws-modules/dynamodb-table/aws"
+  version = "2.0.0"
+
+  name = "terraform-lock"
+  hash_key = "LockID"
+
+  attributes = [
+    {
+      name = "LockID"
+      type = "S"
+    }
+  ]
+}

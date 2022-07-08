@@ -1,4 +1,11 @@
 terraform {
+  backend "s3" {
+    bucket = "ssang-terraform-state"
+    key = "terraform.tfstate"
+    region = "eu-central-1"
+    dynamodb_table = "terraform-lock"
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
