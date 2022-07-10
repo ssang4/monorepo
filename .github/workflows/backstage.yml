@@ -30,4 +30,4 @@ jobs:
         context: backstage
         file: packages/backend/Dockerfile
         push: true
-        tags: ${{ secret.DOCKER_HUB_USERNAME }}/backstage:latest
+        tags: shiuhsenang/backstage:latest
