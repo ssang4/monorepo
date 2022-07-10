@@ -1,0 +1,34 @@
+name: Build and deploy Backstage
+on:
+  push:
+    branches:
+    - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Install node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Build Backstage
+      run: |
+        yarn install --frozen-lockfile
+        yarn tsc
+        yarn build
+      working-directory: backstage
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Push to DockerHub
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: packages/backend/Dockerfile
+        push: true
+        tags: ${{ secret.DOCKER_HUB_USERNAME }}/backstage:latest
+      working-directory: backstage
