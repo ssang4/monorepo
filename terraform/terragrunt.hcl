@@ -1,23 +1,23 @@
 remote_state {
-    backend = "s3"
-    generate = {
-        path = "backend.tf"
-        if_exists = "overwrite_terragrunt"
-    }
-    config = {
-        bucket = "ssang-terraform-state"
-        key = "${path_relative_to_include()}/terraform.tfstate"
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket = "ssang-terraform-state"
+    key    = "${path_relative_to_include()}/terraform.tfstate"
 
-        region = "eu-central-1"
-        encrypt = true
-        dynamodb_table = "terraform-lock"
-    }
+    region         = "eu-central-1"
+    encrypt        = true
+    dynamodb_table = "terraform-lock"
+  }
 }
 
 generate "provider" {
-    path = "provider.tf"
-    if_exists = "overwrite_terragrunt"
-    contents = <<EOF
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
 terraform {
   required_providers {
     aws = {
@@ -37,6 +37,13 @@ provider "aws" {
     region = "eu-west-1"
 
     alias = "ireland"
+}
+
+provider "aws" {
+  profile = "free-tier"
+  region = "eu-central-1"
+
+  alias = "free-tier"
 }
 EOF
 }
