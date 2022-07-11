@@ -42,6 +42,18 @@ spec:
         - name: app-config
           subPath: app-config.production.yaml
           mountPath: /app/app-config.production.yaml
+      - name: postgres
+        image: postgres
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: backstage
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backstage
+              key: POSTGRES_PASSWORD
       volumes:
       - name: app-config
         configMap:
