@@ -6,41 +6,6 @@ locals {
   ses_receipt_rule_name      = "store-on-s3"
 }
 
-module "zones" {
-  source  = "terraform-aws-modules/route53/aws//modules/zones"
-  version = "2.9.0"
-
-  zones = {
-    "ssang.io" = {}
-  }
-}
-
-module "records" {
-  source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "2.9.0"
-
-  zone_name = keys(module.zones.route53_zone_zone_id)[0]
-
-  records = [
-    {
-      name = "_amazonses"
-      type = "TXT"
-      ttl  = "300"
-      records = [
-        aws_ses_domain_identity.this.verification_token
-      ]
-    },
-    {
-      name = ""
-      type = "MX"
-      ttl  = "300"
-      records = [
-        "10 inbound-smtp.eu-west-1.amazonaws.com"
-      ]
-    }
-  ]
-}
-
 resource "aws_ses_domain_identity" "this" {
   domain = "ssang.io"
 
@@ -49,8 +14,7 @@ resource "aws_ses_domain_identity" "this" {
 
 resource "aws_ses_domain_identity_verification" "this" {
   domain = aws_ses_domain_identity.this.id
-
-  depends_on = [module.records]
+  
   provider   = aws.ireland
 }
 
@@ -60,6 +24,11 @@ module "s3_bucket" {
 
   bucket = local.ssang_io_email_bucket_name
   acl    = "private"
+
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
 
   attach_policy = true
   policy = jsonencode({
@@ -108,37 +77,4 @@ resource "aws_ses_receipt_rule" "this" {
   }
 
   provider = aws.ireland
-}
-
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  version = "3.14.2"
-
-  cidr = "10.0.0.0/16"
-
-  azs = [ "eu-central-1a", "eu-central-1b", "eu-central-1c" ]
-  public_subnets = [ "10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24" ]
-}
-
-module "terraform_state_s3_bucket" {
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.3.0"
-
-  bucket = "ssang-terraform-state"
-  acl    = "private"
-}
-
-module "terraform_lock_dynamodb_table" {
-  source = "terraform-aws-modules/dynamodb-table/aws"
-  version = "2.0.0"
-
-  name = "terraform-lock"
-  hash_key = "LockID"
-
-  attributes = [
-    {
-      name = "LockID"
-      type = "S"
-    }
-  ]
 }
