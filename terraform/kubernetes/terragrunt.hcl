@@ -1,11 +1,11 @@
 include "root" {
-    path = find_in_parent_folders()
+  path = find_in_parent_folders()
 }
 
 generate "provider" {
-    path = "provider.tf"
-    if_exists = "overwrite_terragrunt"
-    contents = <<EOF
+  path      = "provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
 terraform {
   required_providers {
     digitalocean = {
