@@ -44,6 +44,7 @@ spec:
           mountPath: /app/app-config.production.yaml
       - name: postgres
         image: postgres
+        env:
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
