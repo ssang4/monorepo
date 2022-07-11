@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: backstage
 data:
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: "5432"
   app-config.production.yaml: |
     app:
       # Should be the same as backend.baseUrl when using the `app-backend` plugin.
@@ -23,6 +25,20 @@ data:
         # backend will bind on the interface that corresponds to the backend.baseUrl
         # hostname.
         host: 0.0.0.0
+
+      database:
+        client: pg
+        connection:
+          host: ${POSTGRES_HOST}
+          port: ${POSTGRES_PORT}
+          user: ${POSTGRES_USER}
+          password: ${POSTGRES_PASSWORD}
+          # https://node-postgres.com/features/ssl
+          # you can set the sslmode configuration option via the `PGSSLMODE` environment variable
+          # see https://www.postgresql.org/docs/current/libpq-ssl.html Table 33.1. SSL Mode Descriptions (e.g. require)
+          # ssl:
+          #   ca: # if you have a CA file and want to verify it you can uncomment this section
+          #     $file: <file-path>/ca/server.crt
 
     catalog:
       # Overrides the default list locations from app-config.yaml as these contain example data.
