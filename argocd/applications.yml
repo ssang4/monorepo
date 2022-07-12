@@ -46,3 +46,22 @@ spec:
     kind: MutatingWebhookConfiguration
     jqPathExpressions:
     - .webhooks[]?.clientConfig.caBundle
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ssang4/monorepo.git
+    targetRevision: HEAD
+    path: argocd/keycloak
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keycloak
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
