@@ -27,7 +27,7 @@ spec:
   project: default
   source:
     repoURL: https://helm.releases.hashicorp.com
-    chart: hashicorp/vault
+    chart: vault
     targetRevision: 0.20.1
     helm:
       releaseName: vault
