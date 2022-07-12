@@ -14,8 +14,8 @@ resource "aws_ses_domain_identity" "this" {
 
 resource "aws_ses_domain_identity_verification" "this" {
   domain = aws_ses_domain_identity.this.id
-  
-  provider   = aws.ireland
+
+  provider = aws.ireland
 }
 
 module "s3_bucket" {
@@ -25,9 +25,9 @@ module "s3_bucket" {
   bucket = local.ssang_io_email_bucket_name
   acl    = "private"
 
-  block_public_acls = true
-  block_public_policy = true
-  ignore_public_acls = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
   restrict_public_buckets = true
 
   attach_policy = true

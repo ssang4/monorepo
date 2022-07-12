@@ -1,5 +1,5 @@
 resource "aws_elasticsearch_domain" "this" {
-  domain_name = "ssang"
+  domain_name           = "ssang"
   elasticsearch_version = "OpenSearch_1.2"
 
   cluster_config {

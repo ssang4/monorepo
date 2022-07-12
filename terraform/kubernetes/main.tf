@@ -3,21 +3,21 @@ data "digitalocean_kubernetes_versions" "this" {
 }
 
 resource "digitalocean_kubernetes_cluster" "this" {
-  name = "ssang"
-  region = "fra1"
-  version = data.digitalocean_kubernetes_versions.this.latest_version
+  name         = "ssang"
+  region       = "fra1"
+  version      = data.digitalocean_kubernetes_versions.this.latest_version
   auto_upgrade = true
 
   node_pool {
-    name = "default"
-    size = "s-1vcpu-2gb"
+    name       = "default"
+    size       = "s-1vcpu-2gb"
     auto_scale = true
-    min_nodes = 1
-    max_nodes = 3
+    min_nodes  = 1
+    max_nodes  = 3
   }
 
   maintenance_policy {
     start_time = "00:00"
-    day = "sunday"
+    day        = "sunday"
   }
 }
