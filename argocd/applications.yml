@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -12,6 +13,30 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: backstage
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    chart: hashicorp/vault
+    targetRevision: 0.20.1
+    helm:
+      releaseName: vault
+      values: |
+        ui:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
