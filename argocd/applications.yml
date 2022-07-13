@@ -75,7 +75,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+    repoURL: https://charts.jenkins.io
     chart: jenkins
     targetRevision: 4.1.13
     helm:
