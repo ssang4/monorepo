@@ -65,3 +65,24 @@ spec:
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+    chart: jenkins
+    targetRevision: 4.1.13
+    helm:
+      releaseName: jenkins
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: jenkins
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
