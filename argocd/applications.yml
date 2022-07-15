@@ -103,7 +103,7 @@ spec:
     helm:
       releaseName: external-secrets
       values: |
-        installCRDs=true
+        installCRDs: true
   destination:
     server: https://kubernetes.default.svc
     namespace: external-secrets
