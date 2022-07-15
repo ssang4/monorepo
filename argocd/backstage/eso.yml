@@ -12,7 +12,7 @@ spec:
       auth:
         kubernetes:
           mountPath: kubernetes
-          role: backstage-eso-reads-backstage-secrets
+          role: backstage
           secretRef:
             name: backstage-sa
             key: token
