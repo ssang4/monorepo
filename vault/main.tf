@@ -1,0 +1,40 @@
+resource "vault_auth_backend" "kubernetes" {
+  type = "kubernetes"
+}
+
+resource "vault_kubernetes_auth_backend_config" "this" {
+  backend = vault_auth_backend.kubernetes.path
+
+  kubernetes_host = var.kubernetes_host
+  
+  disable_iss_validation = true
+}
+
+resource "vault_kubernetes_auth_backend_role" "this" {
+  backend = vault_auth_backend.kubernetes.path
+  role_name = "backstage"
+
+  bound_service_account_names = [ "backstage" ]
+  bound_service_account_namespaces = [ "backstage" ]
+
+  token_policies = [ vault_policy.this.name ]
+}
+
+resource "vault_policy" "this" {
+  name = "read-backtage-secrets"
+
+  policy = <<EOT
+path "secret/data/backstage"  {
+  capabilities = [ "read" ]
+}
+EOT
+}
+
+resource "vault_mount" "kvv2" {
+  path = "secret"
+  type = "kv"
+
+  options = {
+    version = "2"
+  }
+}

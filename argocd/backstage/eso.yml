@@ -1,0 +1,40 @@
+---
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: vault
+spec:
+  provider:
+    vault:
+      server: http://vault.default.svc.cluster.local:8200
+      version: v2
+      path: secret
+      auth:
+        kubernetes:
+          mountPath: kubernetes
+          role: backstage-eso-reads-backstage-secrets
+          secretRef:
+            name: backstage-sa
+            key: token
+
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: backstage
+spec:
+  secretStoreRef:
+    name: vault
+    kind: SecretStore
+  target:
+    name: backstage
+  data:
+  - secretKey: POSTGRES_USER
+    remoteRef:
+      key: secret/backstage
+      property: POSTGRES_USER
+  - secretKey: POSTGRES_PASSWORD
+    remoteRef:
+      key: secret/backstage
+      property: POSTGRES_PASSWORD
+  refreshInterval: 1h
