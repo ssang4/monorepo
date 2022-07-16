@@ -38,3 +38,8 @@ resource "vault_mount" "kvv2" {
     version = "2"
   }
 }
+
+resource "vault_aws_secret_backend" "this" {
+  access_key = "AKIAQKDMYHM2DJ7ZKTX2"
+  region = "eu-central-1"
+}
