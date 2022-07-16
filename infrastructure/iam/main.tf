@@ -97,3 +97,29 @@ resource "aws_iam_user_policy_attachment" "external-dns" {
   user = module.external-dns-iam-user.iam_user_name
   policy_arn = module.external-dns-iam-policy.arn
 }
+
+resource "aws_iam_user" "smtp" {
+  name = "ses-smtp-user.20220716-171602"
+}
+
+resource "aws_iam_user_policy" "smtp" {
+  name = "AmazonSesSendingAccess"
+  user = aws_iam_user.smtp.name
+
+  policy = <<EOT
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "ses:SendRawEmail",
+            "Resource": "*"
+        }
+    ]
+}
+EOT
+}
+
+resource "aws_iam_access_key" "smtp" {
+  user = aws_iam_user.smtp.name
+}
