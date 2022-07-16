@@ -34,6 +34,15 @@ spec:
       values: |
         ui:
           enabled: true
+        ingress:
+          enabled: true
+          annotations:
+            external-dns.alpha.kubernetes.io/hostname: vault.ssang.io
+            cert-manager.io/cluster-issuer: letsencrypt
+          tls:
+          - hosts:
+            - vault.ssang.io
+            secretName: vault-cert
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
