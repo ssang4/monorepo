@@ -243,8 +243,9 @@ spec:
         global:
           postgresql:
             auth:
+              existingSecret: postgresql-password
               secretKeys:
-                adminPasswordKey: postgresql-password
+                adminPasswordKey: POSTGRES_PASSWORD
   destination:
     server: https://kubernetes.default.svc
     namespace: postgresql
