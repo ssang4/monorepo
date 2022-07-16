@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: backstage
 data:
-  POSTGRES_HOST: localhost
+  POSTGRES_HOST: postgresql.postgresql.svc.cluster.local
   POSTGRES_PORT: "5432"
   app-config.production.yaml: |
     app:
