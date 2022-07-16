@@ -10,21 +10,41 @@ resource "vault_kubernetes_auth_backend_config" "this" {
   disable_iss_validation = true
 }
 
-resource "vault_kubernetes_auth_backend_role" "this" {
+resource "vault_kubernetes_auth_backend_role" "backstage" {
   backend = vault_auth_backend.kubernetes.path
   role_name = "backstage"
 
   bound_service_account_names = [ "backstage" ]
   bound_service_account_namespaces = [ "backstage" ]
 
-  token_policies = [ vault_policy.this.name ]
+  token_policies = [ vault_policy.backstage.name ]
 }
 
-resource "vault_policy" "this" {
+resource "vault_policy" "backstage" {
   name = "read-backtage-secrets"
 
   policy = <<EOT
 path "secret/data/backstage"  {
+  capabilities = [ "read" ]
+}
+EOT
+}
+
+resource "vault_kubernetes_auth_backend_role" "external-dns" {
+  backend = vault_auth_backend.kubernetes.path
+  role_name = "external-dns"
+
+  bound_service_account_names = [ "external-dns" ]
+  bound_service_account_namespaces = [ "external-dns" ]
+
+  token_policies = [ vault_policy.external-dns.name ]
+}
+
+resource "vault_policy" "external-dns" {
+  name = "read-external-dns-secrets"
+
+  policy = <<EOT
+path "secret/data/external-dns"  {
   capabilities = [ "read" ]
 }
 EOT
