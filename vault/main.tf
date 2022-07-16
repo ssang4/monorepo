@@ -50,6 +50,26 @@ path "secret/data/external-dns"  {
 EOT
 }
 
+resource "vault_kubernetes_auth_backend_role" "eso" {
+  backend = vault_auth_backend.kubernetes.path
+  role_name = "eso"
+
+  bound_service_account_names = [ "eso" ]
+  bound_service_account_namespaces = [ "eso" ]
+
+  token_policies = [ vault_policy.eso.name ]
+}
+
+resource "vault_policy" "eso" {
+  name = "read-all-secrets"
+
+  policy = <<EOT
+path "secret/*"  {
+  capabilities = [ "read" ]
+}
+EOT
+}
+
 resource "vault_mount" "kvv2" {
   path = "secret"
   type = "kv"
