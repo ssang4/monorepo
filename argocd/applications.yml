@@ -224,3 +224,30 @@ spec:
     path: argocd/eso
   destination:
     server: https://kubernetes.default.svc
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 11.6.16
+    helm:
+      releaseName: postgresql
+      values: |
+        global:
+          postgresql:
+            auth:
+              secretKeys:
+                adminPasswordKey: postgresql-password
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: postgresql
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
