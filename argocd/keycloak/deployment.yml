@@ -17,7 +17,10 @@ spec:
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:18.0.2
-        args: ["start"]
+        args:
+        - start
+        - --auto-build
+        - --db=postgres
         env:
         - name: KEYCLOAK_ADMIN
           valueFrom:
@@ -33,10 +36,10 @@ spec:
           value: "edge"
         - name: KC_HOSTNAME
           value: keycloak.ssang.io
-        - name: KC_DB_URL_HOST
-          value: postgresql.postgresql.svc.cluster.local
         - name: KC_DB
           value: postgres
+        - name: KC_DB_URL_HOST
+          value: postgresql.postgresql.svc.cluster.local
         - name: KC_DB_USER
           valueFrom:
             secretKeyRef:
