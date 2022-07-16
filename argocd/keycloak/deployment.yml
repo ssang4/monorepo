@@ -17,18 +17,40 @@ spec:
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:18.0.2
-        args: ["start-dev"]
+        args: ["start"]
         env:
         - name: KEYCLOAK_ADMIN
-          value: "admin"
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: KEYCLOAK_ADMIN
         - name: KEYCLOAK_ADMIN_PASSWORD
-          value: "admin"
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: KEYCLOAK_ADMIN_PASSWORD
         - name: KC_PROXY
           value: "edge"
+        - name: KC_HOSTNAME
+          value: keycloak.ssang.io
+        - name: KC_DB_URL_HOST
+          value: postgresql.postgresql.svc.cluster.local
+        - name: KC_DB
+          value: postgres
+        - name: KC_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: KC_DB_USER
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: KC_DB_PASSWORD
         ports:
         - name: http
-          containerPort: 8080
+          containerPort: 8443
         readinessProbe:
           httpGet:
             path: /realms/master
-            port: 8080
+            port: 8443
