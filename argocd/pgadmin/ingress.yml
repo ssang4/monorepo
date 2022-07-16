@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: pgadmin.ssang.io
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  rules:
+  - host: pgadmin.ssang.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pgadmin
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - pgadmin.ssang.io
+    secretName: pgadmin-cert
