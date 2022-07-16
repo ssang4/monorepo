@@ -266,7 +266,7 @@ spec:
     path: argocd/pgadmin
   destination:
     server: https://kubernetes.default.svc
-    namespace: postgresql
+    namespace: pgadmin
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
