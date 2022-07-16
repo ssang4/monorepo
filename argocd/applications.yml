@@ -40,6 +40,8 @@ spec:
             annotations:
               external-dns.alpha.kubernetes.io/hostname: vault.ssang.io
               cert-manager.io/cluster-issuer: letsencrypt
+            hosts:
+            - host: vault.ssang.io
             tls:
             - hosts:
               - vault.ssang.io
