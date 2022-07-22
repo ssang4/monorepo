@@ -1,0 +1,24 @@
+<md:EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://keycloak.ssang.io/realms/master">
+<md:IDPSSODescriptor WantAuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+<md:KeyDescriptor use="signing">
+<ds:KeyInfo>
+<ds:KeyName>PCS6X69OT8q1Nc0cjG3lQvcEu6CsBhJu9BN8jWj4hsw</ds:KeyName>
+<ds:X509Data>
+<ds:X509Certificate>MIICmzCCAYMCBgGCCIMNnzANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZtYXN0ZXIwHhcNMjIwNzE2MTkzNDQyWhcNMzIwNzE2MTkzNjIyWjARMQ8wDQYDVQQDDAZtYXN0ZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCZdfphpP9M6jq3LSn+4BaINBfcVfSqbPxz9PvezpFqMmVlOS9nzBT20OLEDBJPw+NamgoGCJqhB8EC/9+99FN+j4Gk2kFi27PvKKAkVn8KMphrghq1W7DnHU2NQ7DUl7tqgJpqbMgEi16OtimPQwPWVjU5IRw9SEoK6EpwoSrM3/V1xIJ6+LX9fHX4GLyZ2htWjO0ujnQDp45N05QGQgnP/iecobwB9XosyFxJdR70589nM6DF2IhWCSZAn9dK9mOEf/+S/WFJMEYYJGfaYtn/7QJZA70tPESw65gy9t5P+lUBGVZi06r3LdBdWh+4i/6M7XrHOOgs+JO9MG5i29jjAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAA2qpYYb92puY6PzPzaLVuSJ2mJkJ3EKj5aOVHxWlka5nJ9mhenTYEls43EoBlDplYUwpwukzBNNRewzNQPtjkbOD9MApAbzyX46HxVX5TqYAtTI6cyhaTlqbsh2f5e/lTlXNN9jU0tnCJi3fxeHpT3H5nssMHY7BYrOFyR47FdUUOMMoSIbGQvnrnAvcfDtvz8i3ukFDOuHQxjd+oyXYXp+OH89cfiH6wdRKnhfi5OwKGqMP4/WnJ7meuqqD5AgB/RmaMXJ53ePX4txRVAxOxh+L3wznbTTpXTRr1+v43+Z0qyGgxqwHRGrVcBHL6E4rR12zy4RW+4hw5tZmRNhsqs=</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+</md:KeyDescriptor>
+<md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://keycloak.ssang.io/realms/master/protocol/saml/resolve" index="0"/>
+<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
+<md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat>
+<md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+<md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://keycloak.ssang.io/realms/master/protocol/saml"/>
+</md:IDPSSODescriptor>
+</md:EntityDescriptor>
