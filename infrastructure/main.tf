@@ -129,3 +129,45 @@ resource "aws_iam_user_policy_attachment" "vault-unseal" {
   user       = module.iam-user-vault-unseal.iam_user_name
   policy_arn = module.iam-policy-vault-unseal.arn
 }
+
+module "iam-policy-external-dns" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "external-dns"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "route53:ChangeResourceRecordSets",
+      "Resource": "arn:aws:route53:::hostedzone/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ListHostedZones",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOT
+}
+
+module "iam-user-external-dns" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.4.0"
+
+  name = "external-dns"
+
+  create_iam_user_login_profile = false
+}
+
+resource "aws_iam_user_policy_attachment" "external-dns" {
+  user       = module.iam-user-external-dns.iam_user_name
+  policy_arn = module.iam-policy-external-dns.arn
+}

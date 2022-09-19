@@ -13,3 +13,15 @@ output "iam-user-vault-unseal-secret-key" {
 output "kms-vault-unseal-kms-id" {
   value = module.kms-vault-unseal.key_id
 }
+
+output "iam-user-external-dns-access-key" {
+  value = module.iam-user-external-dns.iam_access_key_id
+
+  sensitive = true
+}
+
+output "iam-user-external-dns-secret-key" {
+  value = module.iam-user-external-dns.iam_access_key_secret
+
+  sensitive = true
+}
