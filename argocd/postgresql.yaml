@@ -12,7 +12,8 @@ spec:
     helm:
       releaseName: postgresql
       values: |
-        existingSecret: postgresql
+        auth:
+          existingSecret: postgresql
   destination:
     server: https://kubernetes.default.svc
     namespace: postgresql
