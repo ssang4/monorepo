@@ -35,10 +35,10 @@ spec:
           extraSecretEnvironmentVars:
           - envName: AWS_ACCESS_KEY_ID
             secretName: vault
-            secretKey; AWS_ACCESS_KEY_ID
+            secretKey: AWS_ACCESS_KEY_ID
           - envName: AWS_SECRET_ACCESS_KEY
             secretName: vault
-            secretKey; AWS_SECRET_ACCESS_KEY
+            secretKey: AWS_SECRET_ACCESS_KEY
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
