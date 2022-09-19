@@ -1,21 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cert-manager
+  name: cluster-issuers
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://charts.jetstack.io
-    chart: cert-manager
-    targetRevision: 1.9.1
-    helm:
-      releaseName: cert-manager
-      values: |
-        installCRDs: true
+    repoURL: https://github.com/ssang4/monorepo.git
+    targetRevision: HEAD
+    path: argocd/cluster-issuers
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: cluster-issuers
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
