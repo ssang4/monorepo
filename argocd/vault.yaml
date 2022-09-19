@@ -39,6 +39,17 @@ spec:
           - envName: AWS_SECRET_ACCESS_KEY
             secretName: vault
             secretKey: AWS_SECRET_ACCESS_KEY
+
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt
+            hosts:
+            - vault.ssang.io
+            tls:
+            - hosts:
+              - vault.ssang.io
+              secretName: vault-ssang-io-tls-cert
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
