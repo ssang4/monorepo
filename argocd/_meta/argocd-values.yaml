@@ -1,0 +1,17 @@
+crds:
+  install: false
+
+server:
+  extraArgs:
+  - --insecure
+  ingress:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    hosts:
+    - argocd.ssang.io
+    tls:
+    - hosts:
+      - argocd.ssang.io
+      secretName: argocd-ssang-io-tls-cert
