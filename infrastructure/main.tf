@@ -82,3 +82,50 @@ resource "digitalocean_kubernetes_cluster" "this" {
     start_time = "00:00"
   }
 }
+
+module "kms-vault-unseal" {
+  source  = "terraform-aws-modules/kms/aws"
+  version = "1.1.0"
+
+  aliases = [
+    "vault/unseal"
+  ]
+}
+
+module "iam-policy-vault-unseal" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "vault-unseal"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ],
+      "Resource": "${module.kms-vault-unseal.key_arn}"
+    }
+  ]
+}
+EOT
+}
+
+module "iam-user-vault-unseal" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.4.0"
+
+  name = "vault-unseal"
+
+  create_iam_user_login_profile = false
+}
+
+resource "aws_iam_user_policy_attachment" "vault-unseal" {
+  user       = module.iam-user-vault-unseal.iam_user_name
+  policy_arn = module.iam-policy-vault-unseal.arn
+}
