@@ -29,7 +29,7 @@ spec:
 
               seal "awskms" {
                 region = "eu-central-1"
-                kms_key_id = ""
+                kms_key_id = "7ad1dfdd-98fd-4929-a0c0-c38613d0c718"
               }
 
           extraSecretEnvironmentVars:

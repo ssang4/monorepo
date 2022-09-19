@@ -9,3 +9,7 @@ output "iam-user-vault-unseal-secret-key" {
 
   sensitive = true
 }
+
+output "kms-vault-unseal-kms-id" {
+  value = module.kms-vault-unseal.key_id
+}
