@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: 0.22.0
+    helm:
+      releaseName: vault
+      values: |
+        server:
+          standalone:
+            config: |
+              ui = true
+
+              listener "tcp" {
+                tls_disable = 1
+                address = "[::]:8200"
+                cluster_address = "[::]:8201"
+              }
+
+              storage "file" {
+                path = "/vault/data"
+              }
+
+              seal "awskms" {
+                region = "eu-central-1"
+                kms_key_id = ""
+              }
+
+          extraSecretEnvironmentVars:
+          - envName: AWS_ACCESS_KEY_ID
+            secretName: vault
+            secretKey; AWS_ACCESS_KEY_ID
+          - envName: AWS_SECRET_ACCESS_KEY
+            secretName: vault
+            secretKey; AWS_SECRET_ACCESS_KEY
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
