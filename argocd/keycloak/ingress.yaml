@@ -4,6 +4,7 @@ metadata:
   name: keycloak
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
   - host: keycloak.ssang.io
