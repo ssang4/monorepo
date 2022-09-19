@@ -44,7 +44,6 @@ spec:
             enabled: true
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt
-              nginx.ingress.kubernetes.io/ssl-redirect: "true"
             hosts:
             - host: vault.ssang.io
               paths: []
