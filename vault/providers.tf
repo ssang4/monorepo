@@ -1,4 +1,12 @@
 terraform {
+  backend "s3" {
+    bucket         = "ssang-terraform-state"
+    key            = "infrastructure"
+    region         = "eu-central-1"
+    dynamodb_table = "ssang-terraform-lock"
+    profile        = "default"
+  }
+
   required_providers {
     vault = {
       source  = "hashicorp/vault"
@@ -9,5 +17,5 @@ terraform {
 
 provider "vault" {
   address = "https://vault.ssang.io"
-  token = var.vault_root_token
+  token   = var.vault_root_token
 }
