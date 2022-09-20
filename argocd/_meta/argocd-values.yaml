@@ -15,3 +15,21 @@ server:
     - hosts:
       - argocd.ssang.io
       secretName: argocd-ssang-io-tls-cert
+  config:
+    url: https://argocd.ssang.io
+    admin.enabled: "false"
+    oidc.config: |
+      name: Keycloak
+      issuer: https://keycloak.ssang.io/realms/master
+      clientID: argocd
+      clientSecret: $oidc.keycloak.clientSecret
+      requestedIDTokenClaims:
+        groups:
+          essential: true
+      requestedScopes:
+        - openid
+        - profile
+        - email
+  rbacConfig:
+    policy.csv: |
+      g, argocd-admin, role:admin
