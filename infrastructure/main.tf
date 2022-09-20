@@ -13,14 +13,14 @@ module "route53-zone-ssang-io-records" {
 
   zone_name = keys(module.route53-zones.route53_zone_zone_id)[0]
 
-  records = [
+  records = concat([
     {
       name = ""
       type = "TXT"
       ttl  = 300
       records = [
         "protonmail-verification=b86f23bf8f37d2c3a9293056e1461267b33aee81",
-        "v=spf1 include:_spf.protonmail.ch mx ~all",
+        "v=spf1 include:_spf.protonmail.ch mx include:amazonses.com ~all",
       ]
     },
     {
@@ -56,7 +56,17 @@ module "route53-zone-ssang-io-records" {
         "protonmail3.domainkey.dkkgf6iqytwe7gvfpqlrveuupy4oqrfn5oatiircsi7sp4zodrcxq.domains.proton.ch."
       ]
     },
-  ]
+    ], [
+    for dkim_token in aws_ses_domain_dkim.keycloak.dkim_tokens : {
+      name = "${dkim_token}._domainkey.keycloak"
+      type = "CNAME"
+      ttl  = 300
+      records = [
+        "${dkim_token}.dkim.amazonses.com"
+      ]
+    }
+    ]
+  )
 }
 
 data "digitalocean_kubernetes_versions" "this" {
@@ -170,4 +180,49 @@ module "iam-user-external-dns" {
 resource "aws_iam_user_policy_attachment" "external-dns" {
   user       = module.iam-user-external-dns.iam_user_name
   policy_arn = module.iam-policy-external-dns.arn
+}
+
+resource "aws_ses_domain_identity" "keycloak" {
+  domain = "keycloak.ssang.io"
+}
+
+resource "aws_ses_domain_dkim" "keycloak" {
+  domain = aws_ses_domain_identity.keycloak.domain
+}
+
+module "iam-policy-keycloak-smtp" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "keycloak-smtp"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOT
+}
+
+module "iam-user-keycloak-smtp" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.4.0"
+
+  name = "keycloak-smtp"
+
+  create_iam_user_login_profile = false
+}
+
+resource "aws_iam_user_policy_attachment" "keycloak-smtp" {
+  user       = module.iam-user-keycloak-smtp.iam_user_name
+  policy_arn = module.iam-policy-keycloak-smtp.arn
 }

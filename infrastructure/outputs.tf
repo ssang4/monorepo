@@ -25,3 +25,15 @@ output "iam-user-external-dns-secret-key" {
 
   sensitive = true
 }
+
+output "iam-user-keycloak-smtp-smtp-username" {
+  value = module.iam-user-keycloak-smtp.iam_access_key_id
+
+  sensitive = true
+}
+
+output "iam-user-keycloak-smtp-smtp-password" {
+  value = module.iam-user-keycloak-smtp.iam_access_key_ses_smtp_password_v4
+
+  sensitive = true
+}
