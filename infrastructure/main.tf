@@ -226,3 +226,24 @@ resource "aws_iam_user_policy_attachment" "keycloak-smtp" {
   user       = module.iam-user-keycloak-smtp.iam_user_name
   policy_arn = module.iam-policy-keycloak-smtp.arn
 }
+
+resource "aws_iam_saml_provider" "keycloak" {
+  name = "keycloak"
+  saml_metadata_document = file("${path.module}/files/keycloak-saml-metadata.xml")
+}
+
+module "iam-role-saml-keycloak-admin" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-saml"
+  version = "5.4.0"
+
+  create_role = true
+
+  role_name = "admin-kc"
+
+  provider_id = aws_iam_saml_provider.keycloak.arn
+
+  number_of_role_policy_arns = 1
+  role_policy_arns = [
+    "arn:aws:iam::aws:policy/AdministratorAccess"
+  ]
+}
