@@ -37,3 +37,11 @@ output "iam-user-keycloak-smtp-smtp-password" {
 
   sensitive = true
 }
+
+output "iam-saml-provider-keycloak-arn" {
+  value = aws_iam_saml_provider.keycloak.arn
+}
+
+output "iam-role-saml-keycloak-admin-arn" {
+  value = module.iam-role-saml-keycloak-admin.iam_role_arn
+}
