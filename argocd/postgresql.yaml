@@ -14,9 +14,6 @@ spec:
       values: |
         auth:
           existingSecret: postgresql
-        primary:
-          persistence:
-            existingClaim: postgresql-primary-data
   destination:
     server: https://kubernetes.default.svc
     namespace: postgresql
