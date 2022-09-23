@@ -23,8 +23,9 @@ spec:
                 cluster_address = "[::]:8201"
               }
 
-              storage "file" {
-                path = "/vault/data"
+              storage "dynamodb" {
+                region = "eu-central-1"
+                table = "vault"
               }
 
               seal "awskms" {

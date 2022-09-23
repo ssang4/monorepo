@@ -1,11 +1,11 @@
-output "iam-user-vault-unseal-access-key" {
-  value = module.iam-user-vault-unseal.iam_access_key_id
+output "iam-user-vault-access-key" {
+  value = module.iam-user-vault.iam_access_key_id
 
   sensitive = true
 }
 
-output "iam-user-vault-unseal-secret-key" {
-  value = module.iam-user-vault-unseal.iam_access_key_secret
+output "iam-user-vault-secret-key" {
+  value = module.iam-user-vault.iam_access_key_secret
 
   sensitive = true
 }

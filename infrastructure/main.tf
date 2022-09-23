@@ -126,18 +126,23 @@ module "iam-policy-vault-unseal" {
 EOT
 }
 
-module "iam-user-vault-unseal" {
+module "iam-user-vault" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-user"
   version = "5.4.0"
 
-  name = "vault-unseal"
+  name = "vault"
 
   create_iam_user_login_profile = false
 }
 
 resource "aws_iam_user_policy_attachment" "vault-unseal" {
-  user       = module.iam-user-vault-unseal.iam_user_name
+  user       = module.iam-user-vault.iam_user_name
   policy_arn = module.iam-policy-vault-unseal.arn
+}
+
+resource "aws_iam_user_policy_attachment" "vault-dynamodb-storage" {
+  user       = module.iam-user-vault.iam_user_name
+  policy_arn = module.iam-policy-vault-dynamodb-storage.arn
 }
 
 module "iam-policy-external-dns" {
@@ -246,4 +251,62 @@ module "iam-role-saml-keycloak-admin" {
   role_policy_arns = [
     "arn:aws:iam::aws:policy/AdministratorAccess"
   ]
+}
+
+module "dynamodb-table-vault-storage" {
+  source = "terraform-aws-modules/dynamodb-table/aws"
+  version = "3.1.1"
+
+  name = "vault-storage"
+  hash_key = "Path"
+  range_key = "Key"
+
+  attributes = [
+    {
+      name = "Path"
+      type = "S"
+    },
+    {
+      name = "Key"
+      type = "S"
+    },
+  ]
+}
+
+module "iam-policy-vault-dynamodb-storage" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "vault-dynamodb-storage"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DescribeLimits",
+        "dynamodb:DescribeTimeToLive",
+        "dynamodb:ListTagsOfResource",
+        "dynamodb:DescribeReservedCapacityOfferings",
+        "dynamodb:DescribeReservedCapacity",
+        "dynamodb:ListTables",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:CreateTable",
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:UpdateItem",
+        "dynamodb:Scan",
+        "dynamodb:DescribeTable"
+      ],
+      "Resource": "${module.dynamodb-table-vault-storage.dynamodb_table_arn}"
+    }
+  ]
+}
+EOT
 }
