@@ -25,7 +25,7 @@ spec:
 
               storage "dynamodb" {
                 region = "eu-central-1"
-                table = "vault"
+                table = "vault-storage"
               }
 
               seal "awskms" {
