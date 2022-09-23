@@ -15,8 +15,8 @@ spec:
         config:
           outputs: |
             [OUTPUT]
-            Name null
-            Match *
+                Name null
+                Match *
   destination:
     server: https://kubernetes.default.svc
     namespace: fluent-bit
