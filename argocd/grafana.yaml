@@ -24,6 +24,8 @@ spec:
             - grafana.ssang.io
             secretName: grafana-ssang-io-tls-cert
 
+        persistence: true
+
         extraSecretMounts:
         - name: grafana-auth-secret-mount
           secretName: grafana-auth
@@ -34,6 +36,10 @@ spec:
         grafana.ini:
           server:
             root_url: https://grafana.ssang.io
+
+          auth:
+            disable_login_form: true
+            oauth_auto_login: true
 
           auth.generic_oauth:
             name: Keycloak
