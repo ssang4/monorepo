@@ -24,7 +24,8 @@ spec:
             - grafana.ssang.io
             secretName: grafana-ssang-io-tls-cert
 
-        persistence: true
+        persistence:
+          enabled: true
 
         extraSecretMounts:
         - name: grafana-auth-secret-mount
