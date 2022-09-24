@@ -49,6 +49,7 @@ spec:
             allowed_domains: grafana.ssang.io
             allow_sign_up: false
             use_pkce: true
+            role_attribute_path = contains(groups[*], 'grafana-admin') && 'Admin' || 'Viewer'
   destination:
     server: https://kubernetes.default.svc
     namespace: grafana
