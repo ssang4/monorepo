@@ -65,6 +65,15 @@ module "route53-zone-ssang-io-records" {
         "${dkim_token}.dkim.amazonses.com"
       ]
     }
+    ], [
+    for dkim_token in aws_ses_domain_dkim.alertmanager.dkim_tokens : {
+      name = "${dkim_token}._domainkey.alertmanager"
+      type = "CNAME"
+      ttl  = 300
+      records = [
+        "${dkim_token}.dkim.amazonses.com"
+      ]
+    }
     ]
   )
 }
@@ -191,8 +200,16 @@ resource "aws_ses_domain_identity" "keycloak" {
   domain = "keycloak.ssang.io"
 }
 
+resource "aws_ses_domain_identity" "alertmanager" {
+  domain = "alertmanager.ssang.io"
+}
+
 resource "aws_ses_domain_dkim" "keycloak" {
   domain = aws_ses_domain_identity.keycloak.domain
+}
+
+resource "aws_ses_domain_dkim" "alertmanager" {
+  domain = aws_ses_domain_identity.alertmanager.domain
 }
 
 module "iam-policy-keycloak-smtp" {
@@ -230,6 +247,43 @@ module "iam-user-keycloak-smtp" {
 resource "aws_iam_user_policy_attachment" "keycloak-smtp" {
   user       = module.iam-user-keycloak-smtp.iam_user_name
   policy_arn = module.iam-policy-keycloak-smtp.arn
+}
+
+module "iam-policy-alertmanager-smtp" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "alertmanager-smtp"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOT
+}
+
+module "iam-user-alertmanager-smtp" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.4.0"
+
+  name = "alertmanager-smtp"
+
+  create_iam_user_login_profile = false
+}
+
+resource "aws_iam_user_policy_attachment" "alertmanager-smtp" {
+  user       = module.iam-user-alertmanager-smtp.iam_user_name
+  policy_arn = module.iam-policy-alertmanager-smtp.arn
 }
 
 resource "aws_iam_saml_provider" "keycloak" {

@@ -38,6 +38,18 @@ output "iam-user-keycloak-smtp-smtp-password" {
   sensitive = true
 }
 
+output "iam-user-alertmanager-smtp-smtp-username" {
+  value = module.iam-user-alertmanager-smtp.iam_access_key_id
+
+  sensitive = true
+}
+
+output "iam-user-alertmanager-smtp-smtp-password" {
+  value = module.iam-user-alertmanager-smtp.iam_access_key_ses_smtp_password_v4
+
+  sensitive = true
+}
+
 output "iam-saml-provider-keycloak-arn" {
   value = aws_iam_saml_provider.keycloak.arn
 }
