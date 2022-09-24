@@ -11,6 +11,18 @@ spec:
     targetRevision: 6.38.7
     helm:
       releaseName: grafana
+      values: |
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          hosts:
+          - grafana.ssang.io
+          tls:
+          - hosts:
+            - grafana.ssang.io
+            secretName: grafana-ssang-io-tls-cert
   destination:
     server: https://kubernetes.default.svc
     namespace: grafana
