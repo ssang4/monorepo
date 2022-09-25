@@ -12,6 +12,43 @@ spec:
     helm:
       releaseName: elasticsearch
       values: |
+        antiAffinity: soft
+        esJavaOpts: "-Xmx128m -Xms128m"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512M
+          limits:
+            cpu: 100m
+            memory: 512M
+        volumeClaimTemplate:
+          resources:
+            requests:
+              storage: 10Gi
+        protocol: https
+        esConfig:
+          discovery.type: single-node
+          elasticsearch.yml: |
+            xpack.security.enabled: true
+            xpack.security.transport.ssl.enabled: true
+            xpack.security.transport.ssl.verification_mode: certificate
+            xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/private.key
+            xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/certificate.crt
+            xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
+            xpack.security.http.ssl.enabled: true
+            xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/private.key
+            xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/certificate.crt
+            xpack.security.http.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca.crt
+        extraEnvs:
+        - name: ELASTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch
+              key: ELASTIC_PASSWORD
+        secretMounts:
+        - name: elastic-certificates
+          secretName: elasticsearch
+          path: /usr/share/elasticsearch/config/certs
         replicas: 1
         minimumMasterNodes: 1
   destination:
