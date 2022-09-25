@@ -13,7 +13,7 @@ spec:
     - metadata:
         name: elasticsearch-data
       spec:
-        accessmodes:
+        accessModes:
         - ReadWriteOnce
         resources:
           requests:
