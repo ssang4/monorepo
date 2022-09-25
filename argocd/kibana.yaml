@@ -12,7 +12,19 @@ spec:
     helm:
       releaseName: kibana
       values: |
-        elasticsearchHosts: http://elasticseach-master.elasticsearch.svc.cluster.local:9200
+        elasticsearchHosts: http://elasticsearch-master.elasticsearch.svc.cluster.local:9200
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+            nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          hosts:
+          - host: kibana.ssang.io
+            paths: []
+          tls:
+          - hosts:
+            - kibana.ssang.io
+            secretName: kibana-ssang-io-tls-cert
   destination:
     server: https://kubernetes.default.svc
     namespace: kibana
