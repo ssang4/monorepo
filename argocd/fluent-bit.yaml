@@ -15,8 +15,18 @@ spec:
         config:
           outputs: |
             [OUTPUT]
-                Name null
-                Match *
+                Name es
+                Match kube.*
+                Host elasticsearch-master.elasticsearch.svc.cluster.local
+                Logstash_Format On
+                Retry_Limit False
+            [OUTPUT]
+                Name es
+                Match host.*
+                Host elasticsearch-master.elasticsearch.svc.cluster.local
+                Logstash_Format On
+                Logstash_Prefix node
+                Retry_Limit False
   destination:
     server: https://kubernetes.default.svc
     namespace: fluent-bit
