@@ -20,7 +20,8 @@ spec:
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
           hosts:
           - host: kibana.ssang.io
-            paths: []
+            paths:
+            - path: /
           tls:
           - hosts:
             - kibana.ssang.io
