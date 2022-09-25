@@ -102,6 +102,24 @@ resource "digitalocean_kubernetes_cluster" "this" {
   }
 }
 
+resource "digitalocean_kubernetes_node_pool" "ha" {
+  cluster_id = digitalocean_kubernetes_cluster.this.id
+  
+  name = "ha"
+  size = "s-2vcpu-4gb"
+  node_count = 3
+
+  labels = {
+    ha = "true"
+  }
+
+  taint {
+    key = "ha"
+    value = "true"
+    effect = "NoSchedule"
+  }
+}
+
 module "kms-vault-unseal" {
   source  = "terraform-aws-modules/kms/aws"
   version = "1.1.0"
