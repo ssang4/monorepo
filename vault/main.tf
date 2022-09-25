@@ -143,3 +143,88 @@ path "sys/mounts"
 }
 EOT
 }
+
+resource "vault_mount" "pki" {
+  path = "pki"
+  type = "pki"
+  
+  default_lease_ttl_seconds = 315360000
+  max_lease_ttl_seconds = 315360000
+}
+
+resource "vault_pki_secret_backend_config_urls" "root" {
+  backend = vault_mount.pki.path
+  issuing_certificates = [
+    "https://vault.ssang.io/v1/pki/ca",
+  ]
+  crl_distribution_points = [
+    "https://vault.ssang.io/v1/pki/crl",
+  ]
+}
+
+resource "vault_pki_secret_backend_root_cert" "this" {
+  backend = vault_mount.pki.path
+  type = "internal"
+  common_name = "Vault Root CA"
+}
+
+resource "vault_pki_secret_backend_role" "root" {
+  backend = vault_mount.pki.path
+  name = "default"
+  allow_any_name = true
+}
+
+resource "vault_mount" "pki_int" {
+  path = "pki_int"
+  type = "pki"
+  
+  default_lease_ttl_seconds = 31536000
+  max_lease_ttl_seconds = 31536000
+}
+
+resource "vault_pki_secret_backend_config_urls" "intermediate" {
+  backend = vault_mount.pki_int.path
+  issuing_certificates = [
+    "https://vault.ssang.io/v1/pki_int/ca",
+  ]
+  crl_distribution_points = [
+    "https://vault.ssang.io/v1/pki_int/crl",
+  ]
+}
+
+resource "vault_pki_secret_backend_intermediate_cert_request" "this" {
+  backend = vault_mount.pki_int.path
+  type = "internal"
+  common_name = "Vault intermediate CA"
+}
+
+resource "vault_pki_secret_backend_root_sign_intermediate" "this" {
+  backend = vault_mount.pki.path
+  csr = vault_pki_secret_backend_intermediate_cert_request.this.csr
+  common_name = vault_pki_secret_backend_intermediate_cert_request.this.common_name
+}
+
+resource "vault_pki_secret_backend_intermediate_set_signed" "this" {
+  backend = vault_mount.pki_int.path
+  certificate = vault_pki_secret_backend_root_sign_intermediate.this.certificate
+}
+
+resource "vault_pki_secret_backend_role" "intermediate" {
+  backend = vault_mount.pki_int.path
+  name = "default"
+  allow_any_name = true
+}
+
+resource "vault_pki_secret_backend_cert" "elasticsearch" {
+  backend = vault_mount.pki_int.path
+  name = vault_pki_secret_backend_role.intermediate.name
+
+  common_name = "Elasticsearch"
+}
+
+resource "vault_pki_secret_backend_cert" "kibana" {
+  backend = vault_mount.pki_int.path
+  name = vault_pki_secret_backend_role.intermediate.name
+
+  common_name = "Kibana"
+}
