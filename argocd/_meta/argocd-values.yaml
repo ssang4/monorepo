@@ -33,3 +33,6 @@ server:
   rbacConfig:
     policy.csv: |
       g, argocd-admin, role:admin
+
+controller:
+  priorityClassName: system-cluster-critical

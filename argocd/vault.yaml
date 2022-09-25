@@ -53,6 +53,8 @@ spec:
             - hosts:
               - vault.ssang.io
               secretName: vault-ssang-io-tls-cert
+
+          priorityClassName: system-cluster-critical
   destination:
     server: https://kubernetes.default.svc
     namespace: vault
