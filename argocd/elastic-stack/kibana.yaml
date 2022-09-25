@@ -10,7 +10,7 @@ spec:
   podTemplate:
     spec:
       containers:
-      - name: elasticsearch
+      - name: kibana
         resources:
           requests:
             cpu: 100m
