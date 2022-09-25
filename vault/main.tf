@@ -220,6 +220,9 @@ resource "vault_pki_secret_backend_cert" "elasticsearch" {
   name = vault_pki_secret_backend_role.intermediate.name
 
   common_name = "Elasticsearch"
+  alt_names = [
+    "elasticsearch-master.elasticsearch.svc.cluster.local"
+  ]
 }
 
 resource "vault_pki_secret_backend_cert" "kibana" {
@@ -227,4 +230,7 @@ resource "vault_pki_secret_backend_cert" "kibana" {
   name = vault_pki_secret_backend_role.intermediate.name
 
   common_name = "Kibana"
+  alt_names = [
+    "kibana.kibana.svc.cluster.local"
+  ]
 }
