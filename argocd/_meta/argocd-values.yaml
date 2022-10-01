@@ -1,6 +1,3 @@
-crds:
-  install: false
-
 server:
   extraArgs:
   - --insecure
@@ -33,6 +30,22 @@ server:
   rbacConfig:
     policy.csv: |
       g, argocd-admin, role:admin
+  priorityClassName: system-cluster-critical
 
 controller:
+  priorityClassName: system-cluster-critical
+
+dex:
+  priorityClassName: system-cluster-critical
+
+redis:
+  priorityClassName: system-cluster-critical
+
+repoServer:
+  priorityClassName: system-cluster-critical
+
+applicationSet:
+  priorityClassName: system-cluster-critical
+
+notifications:
   priorityClassName: system-cluster-critical
