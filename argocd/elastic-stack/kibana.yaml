@@ -7,17 +7,6 @@ spec:
   count: 1
   elasticsearchRef:
     name: default
-  podTemplate:
-    spec:
-      containers:
-      - name: kibana
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256M
-          limits:
-            cpu: 1000m
-            memory: 512M
   http:
     tls:
       selfSignedCertificate:
