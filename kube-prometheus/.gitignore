@@ -1,3 +1,5 @@
 vendor/
 manifests/grafana-config.yaml
 manifests/alertmanager-secret.yaml
+grafana-config.jsonnet
+alertmanager-email-config.jsonnet
