@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt
+  #   nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: grafana.ssang.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              name: http
+  # tls:
+  # - hosts:
+  #   - grafana.ssang.io
+  #   secretName: grafana-ssang-io-tls-cert

@@ -9,23 +9,23 @@ local kp =
       prometheus+: {
         namespaces: [],
       },
-      grafana+: {
-        config+: (import './grafana-config.jsonnet')
-      },
-      alertmanager+: {
-        config+: {
-          receivers: [{
-            name: 'Critical',
-            email_configs: [(import './alertmanager-email-config.jsonnet')],
-          }, {
-            name: 'Default',
-          }, {
-            name: 'Watchdog',
-          }, {
-            name: 'null',
-          },],
-        },
-      },
+      // grafana+: {
+      //   config+: (import './grafana-config.jsonnet')
+      // },
+      // alertmanager+: {
+      //   config+: {
+      //     receivers: [{
+      //       name: 'Critical',
+      //       email_configs: [(import './alertmanager-email-config.jsonnet')],
+      //     }, {
+      //       name: 'Default',
+      //     }, {
+      //       name: 'Watchdog',
+      //     }, {
+      //       name: 'null',
+      //     },],
+      //   },
+      // },
     },
   };
 
