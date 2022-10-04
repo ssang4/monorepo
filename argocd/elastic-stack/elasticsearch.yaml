@@ -9,6 +9,17 @@ spec:
     count: 2
     config:
       node.store.allow_mmap: false
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 0.6
+              memory: 800Mi
+            limits:
+              cpu: 0.6
+              memory: 800Mi
   http:
     tls:
       selfSignedCertificate:
