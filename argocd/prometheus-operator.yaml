@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/ssang4/monorepo.git
     targetRevision: HEAD
-    path: argocd/kube-prometheus/manifests/setup
+    path: kube-prometheus/manifests/setup
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
