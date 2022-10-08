@@ -1,3 +1,5 @@
+data "aws_caller_identity" "this" {}
+
 module "route53-zones" {
   source  = "terraform-aws-modules/route53/aws//modules/zones"
   version = "2.9.0"
@@ -54,6 +56,14 @@ module "route53-zone-ssang-io-records" {
       ttl  = 300
       records = [
         "protonmail3.domainkey.dkkgf6iqytwe7gvfpqlrveuupy4oqrfn5oatiircsi7sp4zodrcxq.domains.proton.ch."
+      ]
+    },
+    {
+      name = "elasticsearch"
+      type = "CNAME"
+      ttl  = 300
+      records = [
+        aws_elasticsearch_domain.this.endpoint
       ]
     },
     ], [
@@ -363,4 +373,140 @@ module "iam-policy-vault-dynamodb-storage" {
   ]
 }
 EOT
+}
+
+module "acm" {
+  source = "terraform-aws-modules/acm/aws"
+  version = "4.1.0"
+
+  domain_name = "ssang.io"
+  zone_id = module.route53-zones.route53_zone_zone_id["ssang.io"]
+
+  subject_alternative_names = [
+    "*.ssang.io"
+  ]
+
+  wait_for_validation = true
+}
+
+resource "aws_iam_service_linked_role" "elasticsearch" {
+  aws_service_name = "opensearchservice.amazonaws.com"
+}
+
+resource "aws_cloudwatch_log_group" "elasticsearch" {
+  name = "elasticsearch"
+
+  retention_in_days = 1
+}
+
+resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
+  policy_name = "elasticsearch"
+
+  policy_document = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "es.amazonaws.com"
+      },
+      "Action": [
+        "logs:PutLogEvents",
+        "logs:PutLogEventsBatch",
+        "logs:CreateLogStream"
+      ],
+      "Resource": "arn:aws:logs:*"
+    }
+  ]
+}
+EOT
+}
+
+resource "aws_elasticsearch_domain" "this" {
+  domain_name = "default"
+  elasticsearch_version = "7.10"
+
+  cluster_config {
+    instance_type = "t3.small.elasticsearch"
+    instance_count = 1
+  }
+
+  domain_endpoint_options {
+    custom_endpoint_enabled = true
+    custom_endpoint = "elasticsearch.ssang.io"
+    custom_endpoint_certificate_arn = module.acm.acm_certificate_arn
+    enforce_https = true
+    tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
+  }
+
+  advanced_security_options {
+    enabled = true
+    internal_user_database_enabled = false
+    master_user_options {
+      master_user_arn = "arn:aws:iam::${data.aws_caller_identity.this.account_id}:root"
+    }
+  }
+
+  ebs_options {
+    ebs_enabled = true
+    volume_type = "gp3"
+    volume_size = 10
+  }
+
+  encrypt_at_rest {
+    enabled = true
+  }
+
+  node_to_node_encryption {
+    enabled = true
+  }
+
+  snapshot_options {
+    automated_snapshot_start_hour = 0
+  }
+
+  log_publishing_options {
+    enabled = true
+    cloudwatch_log_group_arn = aws_cloudwatch_log_group.elasticsearch.arn
+    log_type = "ES_APPLICATION_LOGS"
+  }
+}
+
+resource "aws_elasticsearch_domain_policy" "this" {
+  domain_name = aws_elasticsearch_domain.this.domain_name
+
+  access_policies = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "es:ESHttp*",
+      "Resource": "${aws_elasticsearch_domain.this.arn}/*"
+    }
+  ]
+}
+EOT
+}
+
+resource "aws_elasticsearch_domain_saml_options" "this" {
+  domain_name = aws_elasticsearch_domain.this.domain_name
+
+  saml_options {
+    enabled = true
+
+    roles_key = "roles"
+    master_backend_role = "elasticsearch-admin"
+
+    idp {
+      entity_id = "https://keycloak.ssang.io/realms/master"
+      metadata_content = file("${path.module}/files/keycloak-saml-metadata.xml")
+    }
+
+    session_timeout_minutes = 1440
+  }
 }
