@@ -581,4 +581,6 @@ module "iam-role-fluent-bit" {
   custom_role_policy_arns = [
     module.iam-policy-fluent-bit.arn
   ]
+
+  role_requires_mfa = false
 }
