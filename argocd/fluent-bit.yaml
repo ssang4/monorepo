@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fluent-bit
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://fluent.github.io/helm-charts
+    chart: fluent-bit
+    targetRevision: 0.20.9
+    helm:
+      releaseName: fluent-bit
+      values: |
+        envFrom:
+        - secretRef:
+            name: fluent-bit
+        config:
+          outputs: |
+            [OUTPUT]
+                Name es
+                Match kube.*
+                Host elasticsearch.ssang.io
+                Port 443
+                Logstash_Format On
+                Retry_Limit False
+                AWS_Auth On
+                AWS_Region eu-central-1
+                tls On
+            [OUTPUT]
+                Name es
+                Match host.*
+                Host elasticsearch.ssang.io
+                Port 443
+                Logstash_Format On
+                Logstash_Prefix node
+                Retry_Limit False
+                AWS_Auth On
+                AWS_Region eu-central-1
+                tls On
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fluent-bit
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true

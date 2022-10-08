@@ -57,3 +57,15 @@ output "iam-saml-provider-keycloak-arn" {
 output "iam-role-saml-keycloak-admin-arn" {
   value = module.iam-role-saml-keycloak-admin.iam_role_arn
 }
+
+output "iam-user-fluent-bit-access-key" {
+  value = module.iam-user-fluent-bit.iam_access_key_id
+
+  sensitive = true
+}
+
+output "iam-user-fluent-bit-secret-key" {
+  value = module.iam-user-fluent-bit.iam_access_key_secret
+
+  sensitive = true
+}
