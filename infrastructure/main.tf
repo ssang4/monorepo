@@ -511,6 +511,40 @@ resource "aws_elasticsearch_domain_saml_options" "this" {
   }
 }
 
+module "iam-policy-assume-role-fluent-bit" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
+  version = "5.4.0"
+
+  name = "assume-role-fluent-bit"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "${module.iam-role-fluent-bit.iam_role_arn}"
+    }
+  ]
+}
+EOT
+}
+
+module "iam-user-fluent-bit" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.4.0"
+
+  name = "fluent-bit"
+
+  create_iam_user_login_profile = false
+}
+
+resource "aws_iam_user_policy_attachment" "fluent-bit" {
+  user       = module.iam-user-fluent-bit.iam_user_name
+  policy_arn = module.iam-policy-assume-role-fluent-bit.arn
+}
+
 module "iam-policy-fluent-bit" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "5.4.0"
@@ -531,16 +565,20 @@ module "iam-policy-fluent-bit" {
 EOT
 }
 
-module "iam-user-fluent-bit" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+module "iam-role-fluent-bit" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "5.4.0"
 
-  name = "fluent-bit"
+  create_role = true
 
-  create_iam_user_login_profile = false
-}
+  role_name = "fluent-bit"
+  
+  trusted_role_arns = [
+    module.iam-user-fluent-bit.iam_user_arn
+  ]
 
-resource "aws_iam_user_policy_attachment" "fluent-bit" {
-  user       = module.iam-user-fluent-bit.iam_user_name
-  policy_arn = module.iam-policy-fluent-bit.arn
+  number_of_custom_role_policy_arns = 1
+  custom_role_policy_arns = [
+    module.iam-policy-fluent-bit.arn
+  ]
 }

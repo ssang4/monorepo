@@ -26,6 +26,7 @@ spec:
                 Retry_Limit False
                 AWS_Auth On
                 AWS_Region eu-central-1
+                AWS_Role_ARN arn:aws:iam::021702916916:role/fluent-bit
                 tls On
             [OUTPUT]
                 Name es
@@ -37,6 +38,7 @@ spec:
                 Retry_Limit False
                 AWS_Auth On
                 AWS_Region eu-central-1
+                AWS_Role_ARN arn:aws:iam::021702916916:role/fluent-bit
                 tls On
   destination:
     server: https://kubernetes.default.svc

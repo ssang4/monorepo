@@ -69,3 +69,7 @@ output "iam-user-fluent-bit-secret-key" {
 
   sensitive = true
 }
+
+output "iam-role-fluent-bit-arn" {
+  value = module.iam-role-fluent-bit.iam_role_arn
+}
