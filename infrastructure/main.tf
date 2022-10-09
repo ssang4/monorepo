@@ -393,36 +393,6 @@ resource "aws_iam_service_linked_role" "elasticsearch" {
   aws_service_name = "opensearchservice.amazonaws.com"
 }
 
-resource "aws_cloudwatch_log_group" "elasticsearch" {
-  name = "elasticsearch"
-
-  retention_in_days = 1
-}
-
-resource "aws_cloudwatch_log_resource_policy" "elasticsearch" {
-  policy_name = "elasticsearch"
-
-  policy_document = <<EOT
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "es.amazonaws.com"
-      },
-      "Action": [
-        "logs:PutLogEvents",
-        "logs:PutLogEventsBatch",
-        "logs:CreateLogStream"
-      ],
-      "Resource": "arn:aws:logs:*"
-    }
-  ]
-}
-EOT
-}
-
 resource "aws_elasticsearch_domain" "this" {
   domain_name = "default"
   elasticsearch_version = "7.10"
@@ -464,12 +434,6 @@ resource "aws_elasticsearch_domain" "this" {
 
   snapshot_options {
     automated_snapshot_start_hour = 0
-  }
-
-  log_publishing_options {
-    enabled = true
-    cloudwatch_log_group_arn = aws_cloudwatch_log_group.elasticsearch.arn
-    log_type = "ES_APPLICATION_LOGS"
   }
 }
 
@@ -583,4 +547,48 @@ module "iam-role-fluent-bit" {
   ]
 
   role_requires_mfa = false
+}
+
+data "aws_ssoadmin_instances" "this" {}
+
+resource "aws_identitystore_user" "ssang" {
+  identity_store_id = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
+
+  display_name = "Shiuh Sen Ang"
+  user_name    = "ssang@protonmail.com"
+
+  name {
+    given_name  = "Shiuh Sen"
+    family_name = "Ang"
+  }
+
+  emails {
+    value = "ssang@protonmail.com"
+  }
+}
+
+resource "aws_ssoadmin_permission_set" "admin" {
+  instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+
+  name = "AdministratorAccess"
+  session_duration = "PT8H"
+}
+
+resource "aws_ssoadmin_managed_policy_attachment" "admin" {
+  instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+  
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
+  managed_policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+resource "aws_ssoadmin_account_assignment" "admin-ssang" {
+  instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
+
+  principal_id = aws_identitystore_user.ssang.user_id
+  principal_type = "USER"
+
+  target_id = data.aws_caller_identity.this.account_id
+  target_type = "AWS_ACCOUNT"
+  
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
 }
