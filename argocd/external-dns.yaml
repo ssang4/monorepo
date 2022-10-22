@@ -23,6 +23,7 @@ spec:
             secretKeyRef:
               name: external-dns
               key: AWS_SECRET_ACCESS_KEY
+        registry: noop
   destination:
     server: https://kubernetes.default.svc
     namespace: external-dns
